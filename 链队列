@@ -1,0 +1,160 @@
+#include "stdio.h" 
+#include "stdlib.h"
+#define M 10//zhuan huan 
+
+typedef char ElemType;//huan bianliang
+typedef struct
+{
+	ElemType data[M];//shuzu 
+	int front,rear;//2ge zhizhen
+}SeqQue;
+
+typedef struct node
+{
+	ElemType data;
+	struct node *next;
+}Qnode;
+
+
+typedef struct qnode
+{
+	Qnode *front;
+	Qnode *rear;	
+}LinkQue;
+
+
+//循环队列的函数原型
+void Init_S(SeqQue *Sq);
+int Empty_S(SeqQue *Sq);
+int Full_S(SeqQue *Sq);
+int Len_S(SeqQue *Sq);
+void In_S(SeqQue *Sq,ElemType x);
+void Out_S(SeqQue *Sq,ElemType *x);
+ElemType Front_S(SeqQue *Sq);
+ElemType Rear_S(SeqQue *Sq);
+
+//链队列的函数原型
+void Init_L(LinkQue *Lq);
+int Empty_L(LinkQue *Lq);
+void In_L(LinkQue *Lq,ElemType x);
+void Out_L(LinkQue *Lq,ElemType *x);
+ElemType Front_L(LinkQue *Lq);
+ElemType Rear_L(LinkQue *Lq);
+
+
+//循环队列中的函数定义部分 
+void Init_S(SeqQue *Sq)
+{
+	Sq->front=-1;
+	Sq->rear=-1;
+}
+
+int Len_S(SeqQue *Sq)
+{
+	return (Sq->rear-Sq->front+M)%M;
+}
+
+int Empty_S(SeqQue *Sq)
+{
+	return (Sq->front+1)%M==Sq->rear;
+}
+
+int Full_S(SeqQue *Sq)
+{
+	return (Sq->rear+1)%M==Sq->front;
+}
+
+
+void In_S(SeqQue *Sq,ElemType x)
+{
+	if(Full_S(Sq))
+	   printf("overflow!!!");
+	else
+	   {
+	   	   Sq->rear=(Sq->rear+1)%M;
+	   	   Sq->data[Sq->rear]=x;
+	   }
+}
+
+void Out_S(SeqQue *Sq,ElemType *x)
+{
+	if(!Empty_S(Sq))
+	{
+		*x=Sq->data[Sq->front+1];
+		Sq->front=(Sq->front+1)%M;
+	}
+	else
+	   printf("underflow!!!");
+}
+
+ElemType Front_S(SeqQue *Sq)
+{
+	if(!Empty_S(Sq))
+	   return Sq->data[Sq->front+1];
+}
+
+ElemType Rear_S(SeqQue *Sq)
+{
+	if(!Empty_S(Sq))
+	   return Sq->data[Sq->rear];
+}
+
+
+int main()
+{
+	SeqQue *Sq1;
+	ElemType x,A;
+	int choice;
+	
+	Sq1=(SeqQue *)malloc(sizeof(SeqQue));
+	Init_S(Sq1);
+	printf("请输入新元素的值，直到遇到#结束:");
+	while(1)
+	{
+		x=getchar();
+		if(x!='#')
+		  In_S(Sq1,x);
+		else
+		   break;
+	}
+	while(1)
+	{
+		printf("**********************\n");
+		printf("1-求队长  2-判队空\n");
+		printf("3-判队满  4-入队\n");
+		printf("5-出队    6-取队头\n");
+		printf("7-取队尾  0-退出\n");
+		printf("**********************\n");
+		printf("请输入选择（0-7）：");
+		scanf("%d",&choice);
+		
+		switch(choice)
+		{
+			case 1:printf("\n队长=%d",Len_S(Sq1));
+			       break;
+			case 2:if(Empty_S(Sq1))printf("队空");
+			       else printf("队非空!");
+			       break;
+			case 3:if(Full_S(Sq1))printf("队满");
+			       else printf("队未满!");
+			       break;
+			case 4:printf("\n请输入新元素:");
+			       x=getchar();
+			       In_S(Sq1,x);
+			       break;
+			case 5:Out_S(Sq1,&A);
+			       printf("\n出队元素是%c",A);
+			       break;
+			case 6:printf("\n队头=%c",Front_S(Sq1));
+			       break;
+			case 7:printf("\n队尾=%c",Rear_S(Sq1));
+			       break;
+			case 0:return 1;
+            default:printf("输入错误，请输入（0-7）!!!");
+                    break;
+		}
+	}
+	return 1;
+}
+ 
+
