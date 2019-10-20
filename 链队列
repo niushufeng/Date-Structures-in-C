@@ -1,160 +1,124 @@
-#include "stdio.h" 
+#include "stdio.h"
 #include "stdlib.h"
-#define M 10//zhuan huan 
 
-typedef char ElemType;//huan bianliang
-typedef struct
-{
-	ElemType data[M];//shuzu 
-	int front,rear;//2ge zhizhen
-}SeqQue;
-
+typedef int elemtype;
 typedef struct node
 {
-	ElemType data;
-	struct node *next;
-}Qnode;
+  elemtype data;
+  struct node *next;
+}quenode;
 
-
-typedef struct qnode
+struct quefr
 {
-	Qnode *front;
-	Qnode *rear;	
-}LinkQue;
+  quenode *front,*rear;
+};
+
+//dingyi bianliang
+void creat(struct quefr *q,int x);//chushihua
+void enqueue(struct quefr *q,int x);//rudui
+elemtype dequeue(struct quefr *q);//chudui
+void display(struct quefr dq);//xianshi
 
 
-//循环队列的函数原型
-void Init_S(SeqQue *Sq);
-int Empty_S(SeqQue *Sq);
-int Full_S(SeqQue *Sq);
-int Len_S(SeqQue *Sq);
-void In_S(SeqQue *Sq,ElemType x);
-void Out_S(SeqQue *Sq,ElemType *x);
-ElemType Front_S(SeqQue *Sq);
-ElemType Rear_S(SeqQue *Sq);
-
-//链队列的函数原型
-void Init_L(LinkQue *Lq);
-int Empty_L(LinkQue *Lq);
-void In_L(LinkQue *Lq,ElemType x);
-void Out_L(LinkQue *Lq,ElemType *x);
-ElemType Front_L(LinkQue *Lq);
-ElemType Rear_L(LinkQue *Lq);
-
-
-//循环队列中的函数定义部分 
-void Init_S(SeqQue *Sq)
+void creat(struct quefr *q)
 {
-	Sq->front=-1;
-	Sq->rear=-1;
+  quenode *h;
+  h=(quenode *)malloc(sizeof(quenode));
+  h->next=NULL;
+  q->front=h;
+  q->rear=h;
 }
 
-int Len_S(SeqQue *Sq)
+void enqueue(struct quefr *q,int x)
 {
-	return (Sq->rear-Sq->front+M)%M;
+  quenode *s;
+  s=(quenode *)malloc(sizeof(quenode));
+  s->data=x;
+  s->next=NULL;
+  q->rear->next=s;
+  q->rear=s;
 }
 
-int Empty_S(SeqQue *Sq)
+elemtype dequeue(struct quefr *q)
 {
-	return (Sq->front+1)%M==Sq->rear;
+  quenode *p;
+      elemtype x;
+    p=(quenode *)malloc(sizeof(quenode));
+    if(q->front == q->rear)
+    {
+      printf("enqueue is NULL\n" );
+      x=0;
+    }
+    else
+    {
+      p=q->front->next;
+      q->front->next=p->next;
+      if(p->next == NULL)
+        q->rear = q->front;
+      x=p->data;
+      free(p);
+    }
+  return(x);
 }
 
-int Full_S(SeqQue *Sq)
+void display(struct quefr *dq)
 {
-	return (Sq->rear+1)%M==Sq->front;
-}
-
-
-void In_S(SeqQue *Sq,ElemType x)
-{
-	if(Full_S(Sq))
-	   printf("overflow!!!");
-	else
-	   {
-	   	   Sq->rear=(Sq->rear+1)%M;
-	   	   Sq->data[Sq->rear]=x;
-	   }
-}
-
-void Out_S(SeqQue *Sq,ElemType *x)
-{
-	if(!Empty_S(Sq))
-	{
-		*x=Sq->data[Sq->front+1];
-		Sq->front=(Sq->front+1)%M;
-	}
-	else
-	   printf("underflow!!!");
-}
-
-ElemType Front_S(SeqQue *Sq)
-{
-	if(!Empty_S(Sq))
-	   return Sq->data[Sq->front+1];
-}
-
-ElemType Rear_S(SeqQue *Sq)
-{
-	if(!Empty_S(Sq))
-	   return Sq->data[Sq->rear];
+  quenode *p;
+  p=(quenode *)malloc(sizeof(quenode));
+  p=dp.front->next;
+  while (p!=NULL) {
+    printf("data=%d\n",p->data );
+    p=p->next;
+  }
+  printf("over---------\n" );
 }
 
 
-int main()
-{
-	SeqQue *Sq1;
-	ElemType x,A;
-	int choice;
-	
-	Sq1=(SeqQue *)malloc(sizeof(SeqQue));
-	Init_S(Sq1);
-	printf("请输入新元素的值，直到遇到#结束:");
-	while(1)
-	{
-		x=getchar();
-		if(x!='#')
-		  In_S(Sq1,x);
-		else
-		   break;
-	}
-	while(1)
-	{
-		printf("**********************\n");
-		printf("1-求队长  2-判队空\n");
-		printf("3-判队满  4-入队\n");
-		printf("5-出队    6-取队头\n");
-		printf("7-取队尾  0-退出\n");
-		printf("**********************\n");
-		printf("请输入选择（0-7）：");
-		scanf("%d",&choice);
-		
-		switch(choice)
-		{
-			case 1:printf("\n队长=%d",Len_S(Sq1));
-			       break;
-			case 2:if(Empty_S(Sq1))printf("队空");
-			       else printf("队非空!");
-			       break;
-			case 3:if(Full_S(Sq1))printf("队满");
-			       else printf("队未满!");
-			       break;
-			case 4:printf("\n请输入新元素:");
-			       x=getchar();
-			       In_S(Sq1,x);
-			       break;
-			case 5:Out_S(Sq1,&A);
-			       printf("\n出队元素是%c",A);
-			       break;
-			case 6:printf("\n队头=%c",Front_S(Sq1));
-			       break;
-			case 7:printf("\n队尾=%c",Rear_S(Sq1));
-			       break;
-			case 0:return 1;
-            default:printf("输入错误，请输入（0-7）!!!");
-                    break;
-		}
-	}
-	return 1;
-}
- 
+int main() {
+  struct quefr *que;
+  int n,i,x,sel;
+  void display();
+  void creat();
+  elemtype dequeue;
+  do
+  {
+    printf("\n" );
+    printf("---------------------------\n" );
+    printf("    1    创建队列       \n" );
+    printf("    2    向队列中插入元素\n" );
+    printf("    3    从列队中删除元素\n" );
+    printf("    4    显示列中的元素\n" );
+    printf("    5    退出          \n" );
+    printf("---------------------------\n" );
+    printf("       请选择1-5      \n" );
+    scanf("%sd\n",&sel );
+    switch (sel) {
+      case 1:
+            que= (struct quefr*)malloc(sizeof(struct quefr));
+            creat(que);
+            printf("请选择你想创造的元素个数：\n" );
+            scanf("%d\n",&n);
+            for(i=1;i<n;i++)
+            {
+              scanf("%d",&x );
+              enqueue(que,x);
+            }
+            break;
+        case 2:
+            printf("请输入你想插入的元素：\n" );
+            scanf("%d",&x);
+            enqueue(que,x);
+            break;
+        case 3:
+            printf("x=%d\n",dequeue(que));
+            break;
+        case 4:
+            display(que);
+            break;
+        case 5:
+            exit(0);
+    }
 
+
+  }while(sel<=4);
+}
